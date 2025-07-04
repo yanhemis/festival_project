@@ -61,6 +61,14 @@ function Login() {
       <p className="login-terms">
         계속을 클릭하면 당사의 <strong>서비스 이용 약관</strong> 및 <strong>개인정보 처리방침</strong>에 동의하는 것으로 간주됩니다.
       </p>
+
+            // 회원가입 페이지 이동
+      <p className="login-bottom-text">
+         계정이 없으신가요?{' '}
+         <span className="login-link" onClick={() => navigate('/signup')}>
+           회원가입
+         </span>
+       </p>       
     </div>
   );
 }
