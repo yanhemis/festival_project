@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-// 'festival_app'은 본인의 프로젝트 이름으로 바꿔주세요.
 import 'package:festival_app/screens/confirmation_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -65,7 +64,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   // 회원가입 로직을 처리하는 함수
   Future<void> _submit() async {
-    // Form의 유효성 검사를 통과하지 못하면 아무것도 하지 않음
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -76,7 +74,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
 
     try {
-      // Amplify Auth를 사용하여 회원가입을 시도합니다.
       final result = await Amplify.Auth.signUp(
         username: _emailController.text.trim(), // 이메일을 username으로 사용
         password: _passwordController.text.trim(),
@@ -88,7 +85,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       );
 
-      // 회원가입 요청이 성공적으로 끝나면, 가입 확인 페이지로 이동합니다.
       if (result.nextStep.signUpStep == AuthSignUpStep.confirmSignUp) {
         Navigator.pushReplacement(
           context,
@@ -98,7 +94,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         );
       }
     } on AuthException catch (e) {
-      // 회원가입 중 에러가 발생하면 스낵바를 통해 사용자에게 알립니다.
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.message),
@@ -288,7 +283,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   },
                 ),
                 const SizedBox(height: 32.0),
-                // 로딩 중일 때는 비활성화된 버튼을, 아닐 때는 활성화된 버튼을 보여줍니다.
                 _isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : ElevatedButton(
