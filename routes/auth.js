@@ -14,7 +14,7 @@ router.post('/signup', async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   users.push({ username, password: hashedPassword });
   res.json({ message: 'Signup success' });
-});
+});rou
 
 // 로그인 → access + refresh 토큰 발급
 router.post('/login', async (req, res) => {
