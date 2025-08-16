@@ -5,6 +5,7 @@ const sequelize = require('./models/index');
 const Post = require('./models/Post');
 
 const app = express();
+#코드중에 port의 할당을 처음과 끝에서 두번 진행했는데 이유가 뭔지(혹시몰라서 GPT물어봤는데 오류 발생한다 답변)##
 const port = 3000;
 
 app.use(cors());
