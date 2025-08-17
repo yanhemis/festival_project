@@ -1,12 +1,13 @@
-// server.js (Node.js + Express + MySQL)
+// server.js (Node.js + Express + MySQL + MongoDB)
 
-require('dotenv').config(); // .env 파일 로드
+require('dotenv').config();
 const express = require('express');
-const mysql = require('mysql2/promise'); // promise 기반 MySQL 드라이버 사용
+const mysql = require('mysql2/promise');
+const { MongoClient, ObjectId } = require('mongodb'); // MongoDB 드라이버
 const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa');
 const cors = require('cors');
-const AWS = require('aws-sdk'); // AWS SDK 임포트
+const AWS = require('aws-sdk');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -32,6 +33,24 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     queueLimit: 0
 });
+
+// MongoDB 연결 설정 (게시판용)
+let mongoClient;
+let postsCollection;
+
+async function connectToMongoDB() {
+    try {
+        mongoClient = new MongoClient(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+        await mongoClient.connect();
+        const db = mongoClient.db('flutter_board_app');
+        postsCollection = db.collection('posts');
+        console.log('Connected to MongoDB');
+    } catch (err) {
+        console.error('Failed to connect to MongoDB', err);
+        process.exit(1);
+    }
+}
+connectToMongoDB();
 
 // AWS SDK 설정 (백엔드에서 Cognito API 호출용)
 AWS.config.update({
@@ -198,6 +217,8 @@ app.get('/users/:cognitoId', verifyToken, async (req, res) => {
         if (connection) connection.release();
     }
 });
+
+
 
 // 서버 시작
 app.listen(port, () => {
