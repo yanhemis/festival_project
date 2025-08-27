@@ -117,6 +117,7 @@ class _BoardListScreenState extends State<BoardListScreen> {
     }
   }
 
+  // 태그
   Widget _buildTagChip(String tag) {
     final bool isSelected = _selectedTags.contains(tag);
     return GestureDetector(
@@ -178,6 +179,7 @@ class _BoardListScreenState extends State<BoardListScreen> {
             border: InputBorder.none,
           ),
         )
+        // 정렬
             : PopupMenuButton<String>(
           onSelected: (String newValue) {
             setState(() {
