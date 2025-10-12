@@ -14,19 +14,18 @@ void receiver_handler(int sig) {
     if (sig == SIGUSR1) {
         received++;
         printf("receiver: received signal #%d and sending ack\n", received);
-        kill(getppid(), SIGUSR1); 
-    } 
-    else if (sig == SIGINT) {
+        kill(getppid(), SIGUSR1);
+    } else if (sig == SIGINT) {
         printf("receiver: received %d signals\n", received);
         _exit(0);
     }
 }
 
-void recv_ack_handler(int sig) {
+void ack_handler(int sig) { 
     acked++;
 }
 
-void sending_handler(int sig) {
+void alarm_handler(int sig) { 
     if (acked >= total_signals) {
         printf("all signals have been sent!\n");
         kill(child_pid, SIGINT);
@@ -34,9 +33,8 @@ void sending_handler(int sig) {
     } else {
         printf("sender: total remaining signal(s): %d\n", total_signals - acked);
         kill(child_pid, SIGUSR1);
-        sent++;
+        alarm(1);
     }
-    alarm(1); 
 }
 
 int main(int argc, char *argv[]) {
@@ -53,23 +51,31 @@ int main(int argc, char *argv[]) {
 
     child_pid = fork();
 
-    if (child_pid == 0) {
+    if (child_pid == 0) { 
         signal(SIGUSR1, receiver_handler);
         signal(SIGINT, receiver_handler);
-        while (1) pause();
-    } else {
-        signal(SIGUSR1, recv_ack_handler);
-        signal(SIGALRM, sending_handler);
+        while (1)
+            pause();
+    } else { 
+        signal(SIGUSR1, ack_handler);
+        signal(SIGALRM, alarm_handler);
 
-        kill(child_pid, SIGUSR1);
-        sent++;
+        for (int i = 0; i < total_signals; i++) {
+            kill(child_pid, SIGUSR1);
+            sent++;
+        }
+
         alarm(1);
 
-        while (1) pause();
+        while (1)
+            pause();
+
+        wait(NULL);
     }
 
     return 0;
 }
+
 
 CC = gcc
 CFLAGS = -Wall
