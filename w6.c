@@ -1,13 +1,12 @@
+//final
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
-//final
 pid_t child_pid;
 int total_signals;
-int sent = 0;
 int acked = 0;
 int received = 0;
 
@@ -22,11 +21,12 @@ void receiver_handler(int sig) {
     }
 }
 
-void ack_handler(int sig) { 
+
+void ack_handler(int sig) {
     acked++;
 }
 
-void alarm_handler(int sig) { 
+void alarm_handler(int sig) {
     if (acked >= total_signals) {
         printf("all signals have been sent!\n");
         kill(child_pid, SIGINT);
@@ -50,33 +50,32 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    child_pid = fork();
+    signal(SIGUSR1, ack_handler);   /* parent will use this after fork */
+    signal(SIGALRM, alarm_handler);
 
-    if (child_pid == 0) { 
+    child_pid = fork();
+    if (child_pid < 0) {
+        perror("fork failed");
+        exit(1);
+    }
+
+    if (child_pid == 0) {
         signal(SIGUSR1, receiver_handler);
         signal(SIGINT, receiver_handler);
-        while (1)
-            pause();
-    } else { 
-        signal(SIGUSR1, ack_handler);
-        signal(SIGALRM, alarm_handler);
 
-        for (int i = 0; i < total_signals; i++) {
-            kill(child_pid, SIGUSR1);
-            sent++;
-        }
+        while (1) pause();
+    } else {
+        kill(child_pid, SIGUSR1);
 
         alarm(1);
 
-        while (1)
-            pause();
+        while (1) pause();
 
         wait(NULL);
     }
 
     return 0;
 }
-
 
 CC = gcc
 CFLAGS = -Wall
