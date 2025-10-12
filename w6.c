@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+//final
 pid_t child_pid;
 int total_signals;
 int sent = 0;
