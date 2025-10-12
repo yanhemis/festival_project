@@ -70,3 +70,15 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
+CC = gcc
+CFLAGS = -Wall
+TARGET = signal_lab
+
+all: $(TARGET)
+
+$(TARGET): signal_lab.c
+	$(CC) $(CFLAGS) -o $(TARGET) signal_lab.c
+
+clean:
+	rm -f $(TARGET)
